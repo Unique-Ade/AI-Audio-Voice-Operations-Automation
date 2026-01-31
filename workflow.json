@@ -1,0 +1,36 @@
+{
+  "name": "AI Audio & Voice Operations Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "audio_video_ingestion",
+        "options": {
+          "binaryPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        -16
+      ],
+      "id": "9dcd5159-bf78-4732-a9a7-c6ecac2097c8",
+      "name": "Audio/Video Ingestion",
+      "webhookId": "b5c386fb-aa94-41c4-b934-4519d4b54da7"
+    }
+  ],
+  "pinData": {},
+  "connections": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "c2c7715a-25f9-47d2-96eb-32e93840cae2",
+  "meta": {
+    "instanceId": "f914190cad50301c71425aabbcd406a965b0f46e8d2b056eea4d20ab3b3b2ced"
+  },
+  "id": "M_XI0p6XHr4GygMSfmHRu",
+  "tags": []
+}
