@@ -12,22 +12,81 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -320,
+        -624,
         -16
       ],
       "id": "9dcd5159-bf78-4732-a9a7-c6ecac2097c8",
       "name": "Audio/Video Ingestion",
       "webhookId": "b5c386fb-aa94-41c4-b934-4519d4b54da7"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ \n  (parseFloat($binary.data.fileSize) <= 25 || $binary.data.fileSize <= 26214400) && \n  ['mp4', 'mp3', 'wav', 'm4a'].includes($binary.data.fileExtension?.toLowerCase()) \n}}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "ac937394-b731-4a0b-b2f5-0325d5f4bf09"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "valid file"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Invalid File"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -240,
+        -32
+      ],
+      "id": "ac5f1506-ac2a-4edf-8272-102f352eb8b8",
+      "name": "Inspect Upload",
+      "alwaysOutputData": true
     }
   ],
   "pinData": {},
-  "connections": {},
+  "connections": {
+    "Audio/Video Ingestion": {
+      "main": [
+        [
+          {
+            "node": "Inspect Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
   "active": false,
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "c2c7715a-25f9-47d2-96eb-32e93840cae2",
+  "versionId": "0e74af16-9854-45f4-960d-8cb78d742a5e",
   "meta": {
     "instanceId": "f914190cad50301c71425aabbcd406a965b0f46e8d2b056eea4d20ab3b3b2ced"
   },
