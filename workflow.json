@@ -12,84 +12,32 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -624,
-        -16
+        -384,
+        144
       ],
-      "id": "9dcd5159-bf78-4732-a9a7-c6ecac2097c8",
-      "name": "Audio/Video Ingestion",
+      "id": "643f614a-17cf-42e5-9264-fe3bdec6ad49",
+      "name": "External Media Ingestion Webhook",
       "webhookId": "b5c386fb-aa94-41c4-b934-4519d4b54da7"
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "loose",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ \n  (parseFloat($binary.data.fileSize) <= 25 || $binary.data.fileSize <= 26214400) && \n  ['mp4', 'mp3', 'wav', 'm4a'].includes($binary.data.fileExtension?.toLowerCase()) \n}}",
-                    "rightValue": true,
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    },
-                    "id": "ac937394-b731-4a0b-b2f5-0325d5f4bf09"
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "valid file"
-            }
-          ]
-        },
-        "looseTypeValidation": true,
-        "options": {
-          "fallbackOutput": "extra",
-          "renameFallbackOutput": "Invalid File"
-        }
-      },
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.4,
-      "position": [
-        -240,
-        -32
-      ],
-      "id": "ac5f1506-ac2a-4edf-8272-102f352eb8b8",
-      "name": "Inspect Upload",
-      "alwaysOutputData": true
     }
   ],
   "pinData": {},
   "connections": {
-    "Audio/Video Ingestion": {
+    "External Media Ingestion Webhook": {
       "main": [
-        [
-          {
-            "node": "Inspect Upload",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1",
+    "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "0e74af16-9854-45f4-960d-8cb78d742a5e",
+  "versionId": "cf3ae406-aa9a-499f-8dfa-31c195945d0c",
   "meta": {
-    "instanceId": "f914190cad50301c71425aabbcd406a965b0f46e8d2b056eea4d20ab3b3b2ced"
+    "instanceId": "29aa07294ccd0c2d5a921a085e583b2fb4e98f972219a9c0f667096ac3416738"
   },
-  "id": "M_XI0p6XHr4GygMSfmHRu",
+  "id": "a4zPmTyvJvm4pX8ca6Vmq",
   "tags": []
 }
