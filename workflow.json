@@ -12,8 +12,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -384,
-        144
+        -880,
+        112
       ],
       "id": "643f614a-17cf-42e5-9264-fe3bdec6ad49",
       "name": "External Media Ingestion Webhook",
@@ -26,12 +26,55 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -176,
-        144
+        -672,
+        112
       ],
       "id": "41a08ffa-a7bd-409d-aeb3-fc915e3f0f81",
       "name": "Audio Processing Job Initializer",
       "executeOnce": false
+    },
+    {
+      "parameters": {
+        "tableId": "media_jobs",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "job_id",
+              "fieldValue": "={{ $json.job_id }}"
+            },
+            {
+              "fieldId": "source",
+              "fieldValue": "={{ $json.body.source }}"
+            },
+            {
+              "fieldId": "department",
+              "fieldValue": "={{ $json.body[\"department \"] }}"
+            },
+            {
+              "fieldId": "uploaded_by",
+              "fieldValue": "={{ $json.body.uploaded_by }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.job_status }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        112
+      ],
+      "id": "43f24386-cf06-44e2-8a3b-f2ea756ca4ba",
+      "name": "Media Job Logger",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OUGgOIS4emvyQiNs",
+          "name": "Supabase account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -46,6 +89,17 @@
           }
         ]
       ]
+    },
+    "Audio Processing Job Initializer": {
+      "main": [
+        [
+          {
+            "node": "Media Job Logger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -54,8 +108,9 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "d48d0c4f-fd07-4a23-aee9-08a8ab6348bf",
+  "versionId": "921c58be-5c6e-4de7-9704-97a10df3db31",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "29aa07294ccd0c2d5a921a085e583b2fb4e98f972219a9c0f667096ac3416738"
   },
   "id": "a4zPmTyvJvm4pX8ca6Vmq",
