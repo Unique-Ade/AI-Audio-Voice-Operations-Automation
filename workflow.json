@@ -18,13 +18,33 @@
       "id": "643f614a-17cf-42e5-9264-fe3bdec6ad49",
       "name": "External Media Ingestion Webhook",
       "webhookId": "b5c386fb-aa94-41c4-b934-4519d4b54da7"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Generate the unique ID\nconst jobId = `job_${Date.now()}`;\n\n// 2. Loop through all incoming items from the webhook\nreturn $input.all().map(item => {\n  // 3. Add the tracking metadata\n  item.json.job_id = jobId;\n  item.json.job_status = \"INGESTED\";\n  item.json.created_at = new Date().toISOString();\n  \n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        144
+      ],
+      "id": "41a08ffa-a7bd-409d-aeb3-fc915e3f0f81",
+      "name": "Audio Processing Job Initializer",
+      "executeOnce": false
     }
   ],
   "pinData": {},
   "connections": {
     "External Media Ingestion Webhook": {
       "main": [
-        []
+        [
+          {
+            "node": "Audio Processing Job Initializer",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -34,7 +54,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "cf3ae406-aa9a-499f-8dfa-31c195945d0c",
+  "versionId": "d48d0c4f-fd07-4a23-aee9-08a8ab6348bf",
   "meta": {
     "instanceId": "29aa07294ccd0c2d5a921a085e583b2fb4e98f972219a9c0f667096ac3416738"
   },
