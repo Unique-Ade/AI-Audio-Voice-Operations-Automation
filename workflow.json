@@ -12,12 +12,13 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -992,
+        -1264,
         -32
       ],
       "id": "643f614a-17cf-42e5-9264-fe3bdec6ad49",
       "name": "External Media Ingestion Webhook",
-      "webhookId": "b5c386fb-aa94-41c4-b934-4519d4b54da7"
+      "webhookId": "b5c386fb-aa94-41c4-b934-4519d4b54da7",
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -26,7 +27,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -784,
+        -1072,
         -32
       ],
       "id": "41a08ffa-a7bd-409d-aeb3-fc915e3f0f81",
@@ -57,6 +58,10 @@
             {
               "fieldId": "status",
               "fieldValue": "={{ $json.job_status }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{ $json.created_at }}"
             }
           ]
         }
@@ -64,11 +69,12 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -320,
-        -32
+        -656,
+        -160
       ],
       "id": "43f24386-cf06-44e2-8a3b-f2ea756ca4ba",
       "name": "Media Job Logger",
+      "alwaysOutputData": true,
       "credentials": {
         "supabaseApi": {
           "id": "OUGgOIS4emvyQiNs",
@@ -82,7 +88,7 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "loose",
+            "typeValidation": "strict",
             "version": 3
           },
           "conditions": [
@@ -107,17 +113,60 @@
           ],
           "combinator": "and"
         },
-        "looseTypeValidation": true,
-        "options": {}
+        "options": {
+          "ignoreCase": false
+        }
       },
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.3,
       "position": [
-        -576,
+        -896,
         -32
       ],
       "id": "3512eee2-978e-425a-baf0-6ee6facb813c",
-      "name": "Ingestion Policy Validator"
+      "name": "Ingestion Policy Validator",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://oowalpauejcvaewdktau.supabase.co/storage/v1/object/raw-media/{{ $json.job_id }}/{{ $binary.data0.fileName }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "=data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -224,
+        -32
+      ],
+      "id": "0d112e69-81a9-4ddb-a72e-956514a78e2e",
+      "name": "HTTP Request",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OUGgOIS4emvyQiNs",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -400,
+        -32
+      ],
+      "id": "fa07f984-ee5a-48ed-92df-337130f3b93c",
+      "name": "Merge"
     }
   ],
   "pinData": {},
@@ -151,6 +200,33 @@
             "node": "Media Job Logger",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Media Job Logger": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -162,7 +238,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "dd375b0b-f0df-4614-b2c9-299657c42857",
+  "versionId": "ab3286f0-f674-4c41-80c3-8588cfb352a8",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "29aa07294ccd0c2d5a921a085e583b2fb4e98f972219a9c0f667096ac3416738"
