@@ -12,8 +12,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -1264,
-        -32
+        -2368,
+        -16
       ],
       "id": "643f614a-17cf-42e5-9264-fe3bdec6ad49",
       "name": "External Media Ingestion Webhook",
@@ -27,8 +27,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1072,
-        -32
+        -2176,
+        -16
       ],
       "id": "41a08ffa-a7bd-409d-aeb3-fc915e3f0f81",
       "name": "Audio Processing Job Initializer",
@@ -69,8 +69,8 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -656,
-        -160
+        -1808,
+        -144
       ],
       "id": "43f24386-cf06-44e2-8a3b-f2ea756ca4ba",
       "name": "Media Job Logger",
@@ -95,7 +95,7 @@
             {
               "id": "5d31f8a0-cb35-49e2-b7b4-c27ef549e34e",
               "leftValue": "={{ Object.values($binary)[0].mimeType }}  ",
-              "rightValue": "^(audio|video)/",
+              "rightValue": "^(audio|video|application/mp4)/",
               "operator": {
                 "type": "string",
                 "operation": "regex"
@@ -120,38 +120,12 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.3,
       "position": [
-        -896,
-        -32
+        -2000,
+        -16
       ],
       "id": "3512eee2-978e-425a-baf0-6ee6facb813c",
       "name": "Ingestion Policy Validator",
       "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "=https://oowalpauejcvaewdktau.supabase.co/storage/v1/object/raw-media/{{ $json.job_id }}/{{ $binary.data0.fileName }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendBody": true,
-        "contentType": "binaryData",
-        "inputDataFieldName": "=data0",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [
-        -224,
-        -32
-      ],
-      "id": "0d112e69-81a9-4ddb-a72e-956514a78e2e",
-      "name": "HTTP Request",
-      "credentials": {
-        "supabaseApi": {
-          "id": "OUGgOIS4emvyQiNs",
-          "name": "Supabase account"
-        }
-      }
     },
     {
       "parameters": {
@@ -162,11 +136,72 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -400,
-        -32
+        -1600,
+        -16
       ],
       "id": "fa07f984-ee5a-48ed-92df-337130f3b93c",
-      "name": "Merge"
+      "name": "Assemble data package",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://oowalpauejcvaewdktau.supabase.co/storage/v1/object/raw-media/{{ $json.job_id }}/{{ $binary.data0.fileName }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1392,
+        -144
+      ],
+      "id": "0d112e69-81a9-4ddb-a72e-956514a78e2e",
+      "name": "Upload to Supabase Storage",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "OUGgOIS4emvyQiNs",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1232,
+        -144
+      ],
+      "id": "f097ecc9-2243-44bf-a606-3948c518306b",
+      "name": "Sync Execution Delay",
+      "webhookId": "cd625491-4412-45a2-80d1-a09207a1633e"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "binaryPropertyName": "={{ $node[\"Assemble data package\"].binary.data0 }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -1024,
+        -16
+      ],
+      "id": "c54719bb-b814-4364-947d-23e3d8ac7afa",
+      "name": "Transcribe Media (Whisper)",
+      "credentials": {
+        "openAiApi": {
+          "id": "1g3YEjmOAKPsT8qR",
+          "name": "OpenAi account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -202,7 +237,7 @@
             "index": 0
           },
           {
-            "node": "Merge",
+            "node": "Assemble data package",
             "type": "main",
             "index": 0
           }
@@ -213,18 +248,45 @@
       "main": [
         [
           {
-            "node": "Merge",
+            "node": "Assemble data package",
             "type": "main",
             "index": 1
           }
         ]
       ]
     },
-    "Merge": {
+    "Assemble data package": {
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "Upload to Supabase Storage",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Transcribe Media (Whisper)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Supabase Storage": {
+      "main": [
+        [
+          {
+            "node": "Sync Execution Delay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync Execution Delay": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Media (Whisper)",
             "type": "main",
             "index": 0
           }
@@ -238,7 +300,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "ab3286f0-f674-4c41-80c3-8588cfb352a8",
+  "versionId": "c50dc892-cc4b-49c9-acf0-e47b12e0e60e",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "29aa07294ccd0c2d5a921a085e583b2fb4e98f972219a9c0f667096ac3416738"
