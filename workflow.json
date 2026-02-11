@@ -5,6 +5,7 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "audio_video_ingestion",
+        "responseMode": "responseNode",
         "options": {
           "binaryPropertyName": "data"
         }
@@ -12,7 +13,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -2608,
+        -2656,
         -16
       ],
       "id": "643f614a-17cf-42e5-9264-fe3bdec6ad49",
@@ -27,7 +28,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2416,
+        -2448,
         -16
       ],
       "id": "41a08ffa-a7bd-409d-aeb3-fc915e3f0f81",
@@ -70,7 +71,7 @@
       "typeVersion": 1,
       "position": [
         -2048,
-        -144
+        -160
       ],
       "id": "43f24386-cf06-44e2-8a3b-f2ea756ca4ba",
       "name": "Media Job Logger",
@@ -154,8 +155,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -1632,
-        -144
+        -1648,
+        -176
       ],
       "id": "0d112e69-81a9-4ddb-a72e-956514a78e2e",
       "name": "Upload to Supabase Storage",
@@ -174,8 +175,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -1472,
-        -144
+        -1456,
+        -176
       ],
       "id": "f097ecc9-2243-44bf-a606-3948c518306b",
       "name": "Sync Execution Delay",
@@ -229,7 +230,7 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -1056,
+        -1072,
         -16
       ],
       "id": "96a31e96-c207-4abc-9d9e-e52482ae0be9",
@@ -240,6 +241,115 @@
           "name": "Supabase account"
         }
       }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"error\", \"error_code\": \"FILE_REJECTED\", \"message\": \"File exceeds the 25MB limit or is not a supported audio/video format.\" }",
+        "options": {
+          "responseCode": 413,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -2256,
+        224
+      ],
+      "id": "42de834d-241f-42da-9e08-1bd42e343f1d",
+      "name": "Response: File Rejected"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"success\", \"message\": \"Media received. Transcription is now processing in the background.\", \"job_id\": \"{{ $node[\"Media Job Logger\"].json.id }}\" }",
+        "options": {
+          "responseCode": 202,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -1856,
+        -272
+      ],
+      "id": "c34d3469-8a9c-4f08-a8d4-a32ff4805645",
+      "name": "Response: Job Accepted"
+    },
+    {
+      "parameters": {
+        "content": "The Gateway (Validation)",
+        "height": 432,
+        "width": 576
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2720,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "b4c8c08a-1d94-4f43-96d2-bd077769cbb1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "The Intake (Job Initiation)",
+        "height": 480,
+        "width": 416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2112,
+        -304
+      ],
+      "typeVersion": 1,
+      "id": "9d7b0b88-2e9d-4055-853c-6c2c9cd68fd2",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "The Engine (Processing)",
+        "height": 416,
+        "width": 544
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1680,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "a8cabdb2-cd2c-4248-833e-80fa3746ed50",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "The Persistence (Completion)",
+        "height": 240
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1120,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "f00824f7-ea63-4626-82ef-87809fe6d5a0",
+      "name": "Sticky Note3"
     }
   ],
   "pinData": {},
@@ -279,12 +389,24 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Response: File Rejected",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Media Job Logger": {
       "main": [
         [
+          {
+            "node": "Response: Job Accepted",
+            "type": "main",
+            "index": 0
+          },
           {
             "node": "Assemble data package",
             "type": "main",
@@ -341,6 +463,11 @@
           }
         ]
       ]
+    },
+    "Response: Job Accepted": {
+      "main": [
+        []
+      ]
     }
   },
   "active": false,
@@ -349,7 +476,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "e38fea18-1fd7-43c5-8c4f-b4c6541eff7a",
+  "versionId": "8624a9a9-91cc-48a2-a7ff-e96e07a3bb2c",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "29aa07294ccd0c2d5a921a085e583b2fb4e98f972219a9c0f667096ac3416738"
