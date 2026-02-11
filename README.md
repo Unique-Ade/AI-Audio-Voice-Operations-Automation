@@ -2,9 +2,9 @@
 
 ## 📌 Project Overview
 
-![Workflow Overview](workflow_overview.PNG)
-
 This project is an end-to-end asynchronous media processing pipeline built with **n8n**, **OpenAI (Whisper)**, **Supabase**, and advanced webhook routing.
+
+![Workflow Overview](workflow_overview.PNG)
 
 It simulates a high-traffic production environment where large media files are ingested, validated, and transcribed. The system provides immediate feedback to the client while handling long-running AI processing tasks in the background.
 
